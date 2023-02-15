@@ -1,24 +1,19 @@
 #!/bin/bash
-sudo apt-get update
-echo "Descargando Google remote desktop"
-wget https://dl.google.com/linux/direct/chrome-remote-desktop_current_amd64.deb
-dpkg -i chrome-remote-desktop_current_amd64.deb
-echo "Instalando entorno gráfico"
-export DEBIAN_FRONTEND=noninteractive
-apt install --assume-yes xfce4 desktop-base xfce4-terminal
-bash -c 'echo \"exec /etc/X11/Xsession /usr/bin/xfce4-session\" > /etc/chrome-remote-desktop-session'
-apt remove --assume-yes gnome-terminal
-apt install --assume-yes xscreensaver
-systemctl disable lightdm.service
-echo "Instalando Google Chrome"
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-dpkg -i google-chrome-stable_current_amd64.deb
-echo Configurando equipo remoto
-DISPLAY= /opt/google/chrome-remote-desktop/start-host --code="4/0AWtgzh7OLkIk5SQxQgM4aQAH834IRxLmTnXjSM31Dyz7ifixqJeziyred0ZHUuIbWaMoGw" --redirect-url="https://remotedesktop.google.com/_/oauthredirect" --name=$(hostname)
-sudo apt-get install firefox -y
-echo Escribe tu configurción de Google Chrome Remote Desktop: 
+sudo apt update
+curl -L -o chrome-remote-desktop_current_amd64.deb \
+    https://dl.google.com/linux/direct/chrome-remote-desktop_current_amd64.deb
+sudo DEBIAN_FRONTEND=noninteractive \
+    apt-get install --assume-yes ./chrome-remote-desktop_current_amd64.deb
+echo Procediendo a instalar XFCE...
+sudo DEBIAN_FRONTEND=noninteractive \
+    apt install --assume-yes xfce4 desktop-base dbus-x11 xscreensaver
+sudo bash -c 'echo "exec /etc/X11/Xsession /usr/bin/xfce4-session" > /etc/chrome-remote-desktop-session'
+sudo systemctl disable lightdm.service
+sudo apt install --assume-yes task-xfce-desktop
+curl -L -o google-chrome-stable_current_amd64.deb \
+https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt install --assume-yes ./google-chrome-stable_current_amd64.deb
+echo Introduce tu clave de Chrome Remote Desktop
 read -r chrome
 $chrome
-wget https://raw.githubusercontent.com/baudiramos/OtoHitsCollab/main/OtoHits.sh
-chmod +x OtoHits.sh
-./OtoHits.sh
+sudo systemctl status chrome-remote-desktop@$USER
